@@ -195,10 +195,10 @@ Il effectue les operations suivantes:
 - Vérifier la création, la lecture (liste + ID) et la mise à jour des rentals.
 - Tester l’upload de fichiers images.
 - Verifier que l’authentification JWT est bien requise pour ces actions.
-- 
+
 ## Commandes Maven 
-mvn clean install
-mvn spring-boot:run
+- mvn clean install
+- mvn spring-boot:run
 
 ## Notes
 - le Front-End pour cet API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end
