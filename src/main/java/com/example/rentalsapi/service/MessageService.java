@@ -1,5 +1,7 @@
 package com.example.rentalsapi.service;
 
+import com.example.rentalsapi.dto.MessageCreateResponse;
+import com.example.rentalsapi.dto.MessageListResponse;
 import com.example.rentalsapi.dto.MessageRequest;
 import com.example.rentalsapi.dto.MessageResponse;
 import com.example.rentalsapi.entity.Message;
@@ -23,9 +25,10 @@ public class MessageService {
     @Autowired private MessageRepository messageRepo;
     @Autowired private RentalRepository rentalRepo;
     @Autowired private UserRepository userRepo;
+    @Autowired private SecurityService securityService;
 
-    public void create(String userEmail, MessageRequest req) {
-        User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+    public MessageCreateResponse create(MessageRequest req) {
+        User user = securityService.getCurrentUser();
         Rental rental = rentalRepo.findById(req.getRentalId()).orElseThrow(() -> new RuntimeException("Rental not found"));
 
         Message msg = new Message();
@@ -34,20 +37,24 @@ public class MessageService {
         msg.setRental(rental);
         msg.setCreatedAt(Timestamp.from(Instant.now()));
         msg.setUpdatedAt(Timestamp.from(Instant.now()));
+        messageRepo.save(msg);
 
-        Message saved = messageRepo.save(msg);
-
+        return new MessageCreateResponse("Message send with success");
     }
 
     /**
      * Récupère tous les messages **envoyés** par l'utilisateur identifié par userEmail.
      */
-    public List<MessageResponse> getAllByUser(String userEmail) {
-        User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-        return messageRepo.findByUserIdOrderByCreatedAtDesc(user.getId())
+    public MessageListResponse getAllByUser() {
+        User user = securityService.getCurrentUser();
+        List<MessageResponse> messages = messageRepo.findByUserIdOrderByCreatedAtDesc(user.getId())
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+
+        MessageListResponse response = new MessageListResponse();
+        response.setMessages(messages);
+        return response;
     }
 
 
@@ -58,16 +65,17 @@ public class MessageService {
      *
      * Renvoie Optional.empty() si le message n'existe pas ou si l'utilisateur n'a pas les droits.
      */
-    public Optional<MessageResponse> getByIdIfOwnedByUser(Long id, String userEmail) {
+    public Optional<MessageResponse> getByIdIfOwnedByUser(Long id) {
+        User currentUser = securityService.getCurrentUser();
         Optional<Message> opt = messageRepo.findById(id);
         if (opt.isEmpty()) return Optional.empty();
 
         Message msg = opt.get();
 
-        boolean isAuthor = msg.getUser() != null && userEmail.equals(msg.getUser().getEmail());
+        boolean isAuthor = msg.getUser() != null && currentUser.getEmail().equals(msg.getUser().getEmail());
         boolean isRentalOwner = msg.getRental() != null
                 && msg.getRental().getOwner() != null
-                && userEmail.equals(msg.getRental().getOwner().getEmail());
+                && currentUser.getEmail().equals(msg.getRental().getOwner().getEmail());
 
         if (isAuthor || isRentalOwner) {
             return Optional.of(toDto(msg));

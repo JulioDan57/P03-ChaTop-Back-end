@@ -1,5 +1,6 @@
 package com.example.rentalsapi.controller;
 
+import com.example.rentalsapi.dto.UserListResponse;
 import com.example.rentalsapi.dto.UserResponse;
 import com.example.rentalsapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -20,9 +19,8 @@ public class UserController {
 
     @Operation(summary = "Récupérer tous les utilisateurs")
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        List<UserResponse> users = userService.getAll();
-        return ResponseEntity.ok(java.util.Map.of("users", users));
+    public ResponseEntity<UserListResponse> getAll() {
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @Operation(summary = "Récupérer un utilisateur par ID")

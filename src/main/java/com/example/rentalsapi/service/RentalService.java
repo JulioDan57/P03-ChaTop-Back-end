@@ -1,7 +1,6 @@
 package com.example.rentalsapi.service;
 
-import com.example.rentalsapi.dto.RentalRequest;
-import com.example.rentalsapi.dto.RentalResponse;
+import com.example.rentalsapi.dto.*;
 import com.example.rentalsapi.entity.Rental;
 import com.example.rentalsapi.entity.User;
 import com.example.rentalsapi.exception.UnauthorizedRentalAccessException;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 public class RentalService {
 
     @Value("${app.upload.dir}")
-    //@Value("${server.servlet.context-path}" + "/" + "${app.upload.dir}")
     private String uploadDir;
 
     @Value("${app.upload.default-image:default.jpg}")
@@ -37,12 +35,13 @@ public class RentalService {
 
     @Autowired private RentalRepository rentalRepo;
     @Autowired private UserRepository userRepo;
+    @Autowired private SecurityService securityService;
 
     /**
      * Crée un rental avec éventuellement une image
      */
-    public RentalResponse create(String ownerEmail, RentalRequest req, MultipartFile pictureFile) throws IOException {
-        User owner = userRepo.findByEmail(ownerEmail).orElseThrow(() -> new RuntimeException("User not found"));
+    public RentalCreateResponse create(RentalRequest req, MultipartFile pictureFile) throws IOException {
+        User owner = securityService.getCurrentUser();
         Rental rental = new Rental();
         rental.setName(req.getName());
         rental.setSurface(req.getSurface());
@@ -55,24 +54,25 @@ public class RentalService {
         // Gestion du fichier image
         if (pictureFile != null && !pictureFile.isEmpty()) {
             rental.setPicture(saveFile(pictureFile));
-        } else if (req.getPicture() != null && !req.getPicture().isEmpty()) {
-            rental.setPicture(Paths.get(req.getPicture()).getFileName().toString());
         } else {
             rental.setPicture(defaultImageName);
         }
 
-        return toDto(rentalRepo.save(rental));
+        rentalRepo.save(rental);
+        return new RentalCreateResponse("Rental created !");
     }
 
     /**
      * Met à jour un rental et éventuellement l'image
      */
-    public Optional<RentalResponse> update(Long id, RentalRequest req, String ownerEmail, MultipartFile pictureFile) throws IOException {
+    public Optional<RentalUpdateResponse> update(Long id, RentalUpdateRequest req) throws IOException {
+        User currentUser = securityService.getCurrentUser();
         Optional<Rental> opt = rentalRepo.findById(id);
+
         if (opt.isEmpty()) return Optional.empty();
 
         Rental rental = opt.get();
-        if (!rental.getOwner().getEmail().equals(ownerEmail)) {
+        if (!rental.getOwner().getEmail().equals(currentUser.getEmail())) {
             throw new UnauthorizedRentalAccessException();
         }
 
@@ -82,17 +82,8 @@ public class RentalService {
         rental.setDescription(req.getDescription());
         rental.setUpdatedAt(Timestamp.from(Instant.now()));
 
-        // Supprime ancienne image si elle n'est pas la default et nouvelle fournie
-        if (pictureFile != null && !pictureFile.isEmpty()) {
-            deleteOldFile(rental.getPicture());
-            rental.setPicture(saveFile(pictureFile));
-        } else if (req.getPicture() != null && !req.getPicture().isEmpty()) {
-            rental.setPicture(Paths.get(req.getPicture()).getFileName().toString());
-        } else if (rental.getPicture() == null) {
-            rental.setPicture(defaultImageName);
-        }
-
-        return Optional.of(toDto(rentalRepo.save(rental)));
+        rentalRepo.save(rental);
+        return Optional.of(new RentalUpdateResponse("Rental updated !"));
     }
 
     /** Supprime un fichier si ce n’est pas l’image par défaut */
@@ -144,7 +135,6 @@ public class RentalService {
 
         // Construire l’URL publique
         dto.setPicture(ServletUriComponentsBuilder.fromCurrentContextPath()
-                //.replacePath("")   // <- supprime le context-path (/api)
                 .path("/" + cleanFolder + filename)
                 .toUriString());
 
@@ -164,10 +154,14 @@ public class RentalService {
         return rentalRepo.findById(id).map(this::toDto);
     }
 
-    public List<RentalResponse> getAll() {
-        return rentalRepo.findAll()
+    public RentalListResponse getAll() {
+        List<RentalResponse> rentals = rentalRepo.findAll()
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+
+        RentalListResponse resp = new RentalListResponse();
+        resp.setRentals(rentals);
+        return resp;
     }
 }

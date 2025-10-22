@@ -29,13 +29,23 @@ rentals-api/
 │  │  ├─ RentalController.java
 │  │  └─ UserController.java
 │  ├─ dto/
-│  │  ├─ AuthRequest.java
+│  │  ├─ AuthRequest.java 
+│  │  ├─ AuthResponse.java 
+│  │  ├─ AuthUserResponse.java
 │  │  ├─ RegisterRequest.java
+│  │  ├─ RegisterResponse.java
 │  │  ├─ MessageRequest.java
+│  │  ├─ MessageCreateResponse.java
 │  │  ├─ MessageResponse.java
+│  │  ├─ MessageListResponse.java
 │  │  ├─ RentalRequest.java
+│  │  ├─ RentalCreateResponse.java
 │  │  ├─ RentalResponse.java
-│  │  └─ UserResponse.java
+│  │  ├─ RentalListResponse.java
+│  │  ├─ RentalUpdateRequest.java
+│  │  ├─ RentalUpdateResponse.java
+│  │  ├─ UserResponse.java
+│  │  └─ UserListResponse.java
 │  ├─ entity/
 │  │  ├─ User.java
 │  │  ├─ Rental.java
@@ -53,6 +63,7 @@ rentals-api/
 │  │  ├─ UserService.java
 │  │  ├─ RentalService.java
 │  │  ├─ MessageService.java
+│  │  ├─ SecurityService.java               # Récupère l'utilisateur via SecurityContext
 │  │  └─ CustomUserDetailsService.java
 │  └─ security/
 │     ├─ JwtUtils.java
@@ -199,6 +210,7 @@ Il effectue les operations suivantes:
 ## Commandes Maven 
 - mvn clean install
 - mvn spring-boot:run
+## Installation et execution (version jar)
 
 ## Notes
 - le Front-End pour cet API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end

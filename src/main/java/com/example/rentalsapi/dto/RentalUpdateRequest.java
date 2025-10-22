@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class RentalRequest {
+public class RentalUpdateRequest {
 
     @Schema(description = "Nom du rental", example = "Appartement T2")
     private String name;

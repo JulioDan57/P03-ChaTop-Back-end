@@ -45,7 +45,6 @@ public class SecurityConfig {
                         // Routes publiques
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        //.requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/auth/register","/auth/login" ).permitAll()
                         // Toutes les autres routes nécessitent une authentification
                         .requestMatchers("/uploads/**").permitAll()

@@ -1,6 +1,6 @@
 package com.example.rentalsapi.service;
 
-import com.example.rentalsapi.dto.RegisterRequest;
+import com.example.rentalsapi.dto.*;
 import com.example.rentalsapi.entity.User;
 import com.example.rentalsapi.repository.UserRepository;
 import com.example.rentalsapi.security.JwtUtils;
@@ -21,7 +21,7 @@ public class AuthService {
     @Autowired private JwtUtils jwtUtils;
     @Autowired private AuthenticationManager authenticationManager;
 
-    public String register(RegisterRequest req) {
+    public RegisterResponse register(RegisterRequest req) {
         userRepo.findByEmail(req.getEmail()).ifPresent(u -> {
             throw new RuntimeException("Email already in use");
         });
@@ -34,20 +34,33 @@ public class AuthService {
         u.setUpdatedAt(Timestamp.from(Instant.now()));
         userRepo.save(u);
 
-        return jwtUtils.generateToken(u.getEmail());
+        return new RegisterResponse(jwtUtils.generateToken(u.getEmail()));
     }
 
-    public String login(String email, String password) {
+    public AuthResponse login(AuthRequest req) {
         // ✅ Utilise Spring Security pour authentifier
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
         );
 
         // Si aucune exception n’est levée, credentials valides
-        return jwtUtils.generateToken(email);
+        return new AuthResponse(jwtUtils.generateToken(req.getEmail()));
+    }
+
+    public AuthUserResponse getCurrentUser(String email) {
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        AuthUserResponse dto = new AuthUserResponse();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        return dto;
     }
 
     public User getByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow();
     }
+
 }

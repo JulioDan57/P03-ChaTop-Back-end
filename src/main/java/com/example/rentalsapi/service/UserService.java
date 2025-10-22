@@ -1,12 +1,12 @@
 package com.example.rentalsapi.service;
 
+import com.example.rentalsapi.dto.UserListResponse;
 import com.example.rentalsapi.dto.UserResponse;
 import com.example.rentalsapi.entity.User;
 import com.example.rentalsapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,10 +15,12 @@ public class UserService {
 
     @Autowired private UserRepository userRepo;
 
-    public List<UserResponse> getAll() {
-        return userRepo.findAll().stream()
+    public UserListResponse getAll() {
+        UserListResponse response = new UserListResponse();
+        response.setUsers(userRepo.findAll().stream()
                 .map(this::toDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        return response;
     }
 
     public Optional<UserResponse> getById(Long id) {
