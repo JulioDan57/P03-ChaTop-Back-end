@@ -212,7 +212,7 @@ Il effectue les operations suivantes:
 - mvn spring-boot:run
 
 ## Notes
-- le Front-End pour cette API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end
+- Le Front-End pour cette API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end
 
 ## Author
 
