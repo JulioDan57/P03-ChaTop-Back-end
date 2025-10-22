@@ -213,7 +213,7 @@ Il effectue les operations suivantes:
 
 ## Notes
 - Le Front-End pour cette API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end
-
+- La version démo de l'API utilise les données fournies par data.sql (le mot de passe des utilisateurs est 1234). Il faut donc copier les images: 15b7e6d1-f0cb-4be5-a410-dc6d468c0d2a.jpg, c6becca1-443b-4f42-a745-f4c4efa3d141.jpg et cf4566b0-333d-47c0-bd6d-89f99288bded.jpg du répertoire static/images vers le répertoire uploads.
 ## Author
 
 Julio Daniel GIL CANO
