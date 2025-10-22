@@ -210,7 +210,6 @@ Il effectue les operations suivantes:
 ## Commandes Maven 
 - mvn clean install
 - mvn spring-boot:run
-## Installation et execution (version jar)
 
 ## Notes
 - le Front-End pour cet API peut être recupêré dans : https://github.com/JulioDan57/P03-ChaTop-Front-end
