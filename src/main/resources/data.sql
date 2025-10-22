@@ -1,4 +1,4 @@
-
+-- Données de test pour USERS. Le mot de passe pour tous est 1234
 INSERT INTO USERS (id, name, email, password, created_at, updated_at) VALUES
 (1, 'Alice Dupont', 'alice@example.com', '$2a$10$1Xbcijit27uwgH3afeXCKeqCuDWXwlxSQLFD9jpwEh6uAexUYl/8q', NOW(), NOW()),
 (2, 'Bob Martin', 'bob@example.com', '$2a$10$NEdry5PVx3BLrQYM9jPfquQHWo3jTxobi.AoaALl53PuvmsRB7ptC', NOW(), NOW()),
