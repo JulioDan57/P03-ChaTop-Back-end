@@ -90,8 +90,8 @@ rentals-api/
 Dans src/main/resources/application.properties :
 
 ### MySQL (La base de données *rentalsdb* doit exister)
-spring.datasource.url=jdbc:mysql://localhost:3306/rentalsdb?useSSL=false&allowPublicKeyRetrieval=true      
-spring.datasource.username={DB_USER}
+spring.datasource.url=jdbc:mysql://localhost:3306/rentalsdb?useSSL=false&allowPublicKeyRetrieval=true        
+spring.datasource.username={DB_USER}  
 spring.datasource.password={DB_PASSWORD}               
 
 
@@ -118,51 +118,51 @@ spring.datasource.password={DB_PASSWORD}
 
 1. Inscription
 
-POST /api/auth/register
-Content-Type: application/json
+POST /api/auth/register  
+Content-Type: application/json  
 
-{
-"email": "user@example.com",
-"name": "John Doe",
-"password": "password123"
-}
+{  
+"email": "user@example.com",  
+"name": "John Doe",  
+"password": "password123"  
+}  
 
-Réponse :
-{
-"token": "<JWT_TOKEN>"
+Réponse :  
+{  
+"token": "<JWT_TOKEN>"  
 }
 
 2. Connexion
 
-POST /api/auth/login
-Content-Type: application/json
+POST /api/auth/login  
+Content-Type: application/json  
 
-{
-"email": "user@example.com",
-"password": "password123"
+{  
+"email": "user@example.com",  
+"password": "password123"  
 }
 
-Réponse :
-{
-"token": "<JWT_TOKEN>"
+Réponse :  
+{  
+"token": "<JWT_TOKEN>"  
 }
 
 3. Création d’un rental avec image
 
-POST /api/rentals
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: multipart/form-data
+POST /api/rentals  
+Authorization: Bearer <JWT_TOKEN>  
+Content-Type: multipart/form-data  
 
-name:Appartement T2
-surface:45.5
-price:500.0,
-description:Appartement lumineux
-picture: <fichier image>
+name:Appartement T2  
+surface:45.5  
+price:500.0,  
+description:Appartement lumineux  
+picture: {fichier image}  
 
 Réponse :
 
-{
-"message": "Rental created !"
+{  
+"message": "Rental created !"  
 }
 
 
